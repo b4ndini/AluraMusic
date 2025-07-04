@@ -1,10 +1,13 @@
 package com.lfelipe.alura.music;
 
 import com.lfelipe.alura.music.model.Artista;
+import com.lfelipe.alura.music.model.Genero;
+import com.lfelipe.alura.music.model.Musica;
 import com.lfelipe.alura.music.model.TipoArtista;
 import com.lfelipe.alura.music.repository.ArtistaRepository;
 import com.lfelipe.alura.music.repository.MusicaRepository;
 
+import java.util.Optional;
 import java.util.Scanner;
 
 public class Menu {
@@ -14,7 +17,7 @@ public class Menu {
     private final MusicaRepository musicaRepository;
 
     public Menu(ArtistaRepository artistaRepository, MusicaRepository musicaRepository) {
-        this.musicaRepository =  musicaRepository;
+        this.musicaRepository = musicaRepository;
         this.artistaRepository = artistaRepository;
     }
 
@@ -37,8 +40,7 @@ public class Menu {
                     cadastrarArtista();
                     break;
                 case 2:
-                    System.out.println("Cadastrar Música selecionado.");
-
+                    cadastrarMusica();
                     break;
                 case 3:
                     System.out.println("Listar Músicas selecionado.");
@@ -62,14 +64,47 @@ public class Menu {
         scanner.close();
     }
 
+    private void cadastrarMusica() {
+        System.out.println("=== Cadastro de Musica ===");
+        System.out.println("Nome da Música:");
+        String nomeMusica = scanner.nextLine();
+        System.out.println("Duração da música:");
+        String duracao = scanner.nextLine();
+        Artista artista = getArtista();
+        System.out.println("Tipo");
+        System.out.println("Selecione um gênero para a música:");
+        mostrarSelecionadorEnums(Genero.class);
+        int generoSelecionado = scanner.nextInt();
+
+        try {
+            musicaRepository.save(new Musica(nomeMusica, duracao, Genero.values()[generoSelecionado - 1], artista));
+        } catch (IndexOutOfBoundsException e) {
+            System.out.println("Opção inválida!!");
+        } catch (Exception e) {
+            System.out.println("Não foi possível salvar a música.\n" + e.getLocalizedMessage());
+        }
+    }
+
+    private Artista getArtista() {
+            do {
+                System.out.println("Digite o nome do artista:");
+                String nomeArtista = scanner.nextLine();
+                Optional<Artista> artistaDoBanco = artistaRepository.findByNomeContainingIgnoreCase(nomeArtista);
+                if (artistaDoBanco.isPresent()) {
+                    return artistaDoBanco.get();
+                } else {
+                    System.out.println("Artista não encontrado!");
+                }
+            } while(true);
+        }
+
+
     private void cadastrarArtista(){
         System.out.println("=== Cadastro de Artista ===");
         System.out.println("Digite o nome do(s) artista(s)/banda:");
         String nome = scanner.nextLine();
         System.out.println("Digite o tipo de artista(s):(Solo, Dupla ou Banda)");
-        for (int i = 1; i <= 3; i++) {
-            System.out.println(i+ " - " + TipoArtista.values()[i-1]);
-        }
+        mostrarSelecionadorEnums(TipoArtista.class);
         int opcaoTipoArtista = scanner.nextInt();
 
         try{
@@ -78,6 +113,13 @@ public class Menu {
             System.out.println("Opção inválida!!");
         }catch (Exception e){
             System.out.println("Não foi possível cadastrar o artista.\n" + e.getLocalizedMessage());
+        }
+    }
+
+    private <T extends Enum<T>> void mostrarSelecionadorEnums(Class<T> enumClass) {
+        T[] valores = enumClass.getEnumConstants();
+        for (int i = 0; i < valores.length; i++) {
+            System.out.println((i + 1) + " - " + valores[i]);
         }
     }
 }

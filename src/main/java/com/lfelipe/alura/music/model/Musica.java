@@ -11,6 +11,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Musica {
 
+    public Musica(String nome, String duracao, Genero genero, Artista artista){
+        this.nome = nome;
+        this.duracao = duracao;
+        this.genero = genero;
+        this.artista = artista;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

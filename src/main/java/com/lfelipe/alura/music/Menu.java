@@ -1,9 +1,22 @@
 package com.lfelipe.alura.music;
 
+import com.lfelipe.alura.music.model.Artista;
+import com.lfelipe.alura.music.model.TipoArtista;
+import com.lfelipe.alura.music.repository.ArtistaRepository;
+import com.lfelipe.alura.music.repository.MusicaRepository;
+
 import java.util.Scanner;
 
 public class Menu {
+
     private final Scanner scanner = new Scanner(System.in);
+    private final ArtistaRepository artistaRepository;
+    private final MusicaRepository musicaRepository;
+
+    public Menu(ArtistaRepository artistaRepository, MusicaRepository musicaRepository) {
+        this.musicaRepository =  musicaRepository;
+        this.artistaRepository = artistaRepository;
+    }
 
     public void showMenu() {
         int opcao;
@@ -21,7 +34,7 @@ public class Menu {
 
             switch (opcao) {
                 case 1:
-                    System.out.println("Cadastrar Artista selecionado.");
+                    cadastrarArtista();
                     break;
                 case 2:
                     System.out.println("Cadastrar Música selecionado.");
@@ -47,5 +60,24 @@ public class Menu {
         } while (opcao != 0);
 
         scanner.close();
+    }
+
+    private void cadastrarArtista(){
+        System.out.println("=== Cadastro de Artista ===");
+        System.out.println("Digite o nome do(s) artista(s)/banda:");
+        String nome = scanner.nextLine();
+        System.out.println("Digite o tipo de artista(s):(Solo, Dupla ou Banda)");
+        for (int i = 1; i <= 3; i++) {
+            System.out.println(i+ " - " + TipoArtista.values()[i-1]);
+        }
+        int opcaoTipoArtista = scanner.nextInt();
+
+        try{
+            artistaRepository.save(new Artista(nome, TipoArtista.values()[opcaoTipoArtista-1]));
+        }catch (IndexOutOfBoundsException e){
+            System.out.println("Opção inválida!!");
+        }catch (Exception e){
+            System.out.println("Não foi possível cadastrar o artista.\n" + e.getLocalizedMessage());
+        }
     }
 }

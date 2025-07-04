@@ -14,6 +14,11 @@ import java.util.List;
 @AllArgsConstructor
 public class Artista {
 
+    public Artista(String nome, TipoArtista tipoArtista) {
+        this.nome = nome;
+        this.tipoArtista = tipoArtista;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

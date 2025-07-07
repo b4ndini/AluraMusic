@@ -1,5 +1,6 @@
 package com.lfelipe.alura.music;
 
+import com.lfelipe.alura.music.controller.GroqController;
 import com.lfelipe.alura.music.model.Artista;
 import com.lfelipe.alura.music.model.Genero;
 import com.lfelipe.alura.music.model.Musica;
@@ -15,10 +16,12 @@ public class Menu {
     private final Scanner scanner = new Scanner(System.in);
     private final ArtistaRepository artistaRepository;
     private final MusicaRepository musicaRepository;
+    private final GroqController groqController;
 
-    public Menu(ArtistaRepository artistaRepository, MusicaRepository musicaRepository) {
+    public Menu(ArtistaRepository artistaRepository, MusicaRepository musicaRepository, GroqController groqController) {
         this.musicaRepository = musicaRepository;
         this.artistaRepository = artistaRepository;
+        this.groqController = groqController;
     }
 
     public void showMenu() {
@@ -49,7 +52,7 @@ public class Menu {
                     System.out.println("Buscar Músicas por Artista selecionado.");
                     break;
                 case 5:
-                    System.out.println("Informações sobre um Artista selecionado.");
+                    mostrarInformacoesArtistaPesquisado();
                     break;
                 case 0:
                     System.out.println("Saindo...");
@@ -62,6 +65,13 @@ public class Menu {
         } while (opcao != 0);
 
         scanner.close();
+    }
+
+    private void mostrarInformacoesArtistaPesquisado() {
+        System.out.println("Digite o nome do artista/banda a ser pesquisado:");
+        String artista = scanner.nextLine();
+        String busca = "Pesquise em pt-br a banda/artista " + artista;
+        groqController.getQrogAnswer(busca);
     }
 
     private void cadastrarMusica() {

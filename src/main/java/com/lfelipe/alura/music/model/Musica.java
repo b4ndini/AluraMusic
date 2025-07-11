@@ -18,6 +18,15 @@ public class Musica {
         this.artista = artista;
     }
 
+    @Override
+    public String toString() {
+        return
+                "duração = '" + duracao + '\'' +
+                ", nome = '" + nome + '\'' +
+                ", gênero = " + genero.toString() +
+                ", Artista/Banda = " + getArtista().getNome();
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -25,6 +34,6 @@ public class Musica {
     private String duracao;
     @Enumerated(EnumType.STRING)
     private Genero genero;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private Artista artista;
 }

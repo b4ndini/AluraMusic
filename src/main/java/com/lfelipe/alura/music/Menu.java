@@ -8,6 +8,7 @@ import com.lfelipe.alura.music.model.TipoArtista;
 import com.lfelipe.alura.music.repository.ArtistaRepository;
 import com.lfelipe.alura.music.repository.MusicaRepository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
 
@@ -46,10 +47,10 @@ public class Menu {
                     cadastrarMusica();
                     break;
                 case 3:
-                    System.out.println("Listar Músicas selecionado.");
+                    listarMusicas();
                     break;
                 case 4:
-                    System.out.println("Buscar Músicas por Artista selecionado.");
+                    buscarMusicasPorArtista();
                     break;
                 case 5:
                     mostrarInformacoesArtistaPesquisado();
@@ -65,6 +66,17 @@ public class Menu {
         } while (opcao != 0);
 
         scanner.close();
+    }
+
+    private void buscarMusicasPorArtista() {
+        System.out.println("Digite o nome do Artista: ");
+        String artista = scanner.nextLine();
+        try{
+            List<Musica> musicasPorArtista = musicaRepository.getMusicasPorArtistaComJPQL(artista);
+            musicasPorArtista.forEach(System.out::println);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     private void mostrarInformacoesArtistaPesquisado() {
@@ -108,7 +120,6 @@ public class Menu {
             } while(true);
         }
 
-
     private void cadastrarArtista(){
         System.out.println("=== Cadastro de Artista ===");
         System.out.println("Digite o nome do(s) artista(s)/banda:");
@@ -130,6 +141,14 @@ public class Menu {
         T[] valores = enumClass.getEnumConstants();
         for (int i = 0; i < valores.length; i++) {
             System.out.println((i + 1) + " - " + valores[i]);
+        }
+    }
+
+    private void listarMusicas() {
+        try{
+            musicaRepository.findAll().forEach(System.out::println);
+        }catch(Exception e){
+            System.out.println("Não foi possível exibir as músicas cadastradas. Erro: " + e.getLocalizedMessage());
         }
     }
 }
